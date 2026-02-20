@@ -12,23 +12,37 @@ class HomeScreen extends ConsumerWidget {
     final data = ref.watch(mealProvider);
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Lets Make Meal",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Switzer',
-            ),
-          ),
-          centerTitle: true,
-        ),
-
-        backgroundColor: Colors.white70,
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
+        backgroundColor: Colors.blueGrey,
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Let's Make\n",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 32,
+                        fontFamily: 'Switzer',
+                      ),
+                    ),
+                    TextSpan(
+                      text: "Delicious Meals",
+                      style: TextStyle(
+                        color: Colors.orangeAccent,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Switzer',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              TextField(
                 onTap: () {
                   Navigator.push(
                     context,
@@ -36,68 +50,104 @@ class HomeScreen extends ConsumerWidget {
                   );
                 },
                 decoration: InputDecoration(
-                  hintText: "Search for meals...",
-                  prefixIcon: Icon(Icons.search),
+                  hintText: "What are you craving today?",
+                  hintStyle: TextStyle(color: Colors.black, fontSize: 15),
+                  prefixIcon: Icon(Icons.search, color: Colors.blue, size: 24),
+                  fillColor: Colors.white,
+                  filled: true,
+
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: data.when(
-                data: (meal) => GridView.builder(
-                  padding: EdgeInsets.all(8),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemCount: meal.length,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        Container(
-                          height: 150,
-                          width: double.infinity,
-                          color: Colors.black,
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return DetailScreen(
-                                      category: meal[index].strCategory,
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            child: Image.network(
-                              meal[index].strCategoryThumb,
-                              fit: BoxFit.cover,
+
+              SizedBox(height: 24),
+
+              Expanded(
+                child: data.when(
+                  data: (meal) => GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
+                    itemCount: meal.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return DetailScreen(
+                                  category: meal[index].strCategory,
+                                );
+                              },
                             ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: Hero(
+                                  tag: 'meal_${meal[index].strCategory}',
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(16),
+                                      topRight: Radius.circular(16),
+                                      bottomLeft: Radius.circular(16),
+                                      bottomRight: Radius.circular(16),
+                                    ),
+                                    child: Image.network(
+                                      meal[index].strCategoryThumb,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Center(
+                                    child: Text(
+                                      meal[index].strCategory,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Switzer',
+                                        fontSize: 16,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 8),
-                        Text(
-                          meal[index].strCategory,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Switzer',
-                          ),
-                        ),
-                      ],
-                    );
-                  },
+                      );
+                    },
+                  ),
+                  error: (error, stack) =>
+                      Center(child: Text(error.toString())),
+                  loading: () => Center(child: CircularProgressIndicator()),
                 ),
-                error: (error, stack) => Center(child: Text(error.toString())),
-                loading: () => Center(child: CircularProgressIndicator()),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

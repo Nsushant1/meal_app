@@ -11,74 +11,78 @@ class MealsScreen extends ConsumerWidget {
     ref.read(mealsProvider.notifier).fetchReceipe(mealId);
 
     final data = ref.watch(mealsProvider);
-    final meal = data.maybeWhen(
-      data: (recipe) => recipe.isNotEmpty ? recipe[0] : null,
-      orElse: () => null,
-    );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          meal?.strMeal ?? 'Meal Details',
-          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Switzer'),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.blue.shade50,
-        elevation: 0,
-      ),
-      body: data.when(
-        data: (recipe) => SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.network(
-                  meal!.strMealThumb,
-                  height: 250,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Chip(
-                            label: Text(meal.strCategory),
-                            backgroundColor: Colors.blue.shade50,
-                            labelStyle: TextStyle(color: Colors.blue.shade700),
-                          ),
-                          SizedBox(width: 8),
-                          Chip(
-                            label: Text(meal.strArea),
-                            backgroundColor: Colors.green.shade50,
-                            labelStyle: TextStyle(color: Colors.green.shade700),
-                          ),
-                        ],
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.blueGrey,
+        body: data.when(
+          data: (recepie) {
+            final meal = recepie[0];
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      child: Image.network(
+                        meal.strMealThumb,
+                        height: 250,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
                       ),
+                    ),
 
-                      SizedBox(height: 24),
-
-                      Text(
-                        'Ingredients',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Switzer',
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Chip(
+                              label: Text(meal.strCategory),
+                              backgroundColor: Colors.orangeAccent,
+                              labelStyle: TextStyle(
+                                fontFamily: 'Switzer',
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Chip(
+                              backgroundColor: Colors.white,
+                              label: Text(meal.strArea),
+                              labelStyle: TextStyle(
+                                fontFamily: 'Switzer',
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      SizedBox(height: 12),
 
-                      ...meal.ingredients.map((ingredient) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 8),
-                          child: Row(
+                        SizedBox(height: 24),
+
+                        Text(
+                          'Ingredients',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Switzer',
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+
+                        ...meal.ingredients.map((ingredient) {
+                          return Row(
                             children: [
-                              Icon(Icons.arrow_right),
+                              Icon(
+                                Icons.arrow_right,
+                                size: 20,
+                                color: Colors.white,
+                              ),
                               SizedBox(width: 12),
                               Expanded(
                                 child: Text(
@@ -87,64 +91,78 @@ class MealsScreen extends ConsumerWidget {
                                     fontSize: 16,
                                     fontFamily: "Switzer",
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
                             ],
+                          );
+                        }),
+
+                        SizedBox(height: 24),
+                        Text(
+                          'Instructions',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontFamily: "Switzer",
+                            fontWeight: FontWeight.w600,
                           ),
-                        );
-                      }),
-
-                      SizedBox(height: 24),
-                      Text(
-                        'Instructions',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Switzer',
                         ),
-                      ),
-                      SizedBox(height: 12),
-                      Text(
-                        meal.strInstructions,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black87,
-                          fontFamily: "Switzer",
-                          fontWeight: FontWeight.w600,
+                        SizedBox(height: 12),
+                        Text(
+                          meal.strInstructions,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontFamily: "Switzer",
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
 
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
+                        SizedBox(height: 24),
+
+                        ElevatedButton(
                           onPressed: () {},
-
-                          child: Text(
-                            'Watch Video',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orangeAccent,
+                            foregroundColor: Colors.black,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.play_arrow, size: 24),
+                              SizedBox(width: 8),
+                              Text(
+                                'Watch Video',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Switzer',
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-
-                      SizedBox(height: 16),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
+              ),
+            );
+          },
+          error: (error, stack) => Center(
+            child: Text(
+              'Error: ${error.toString()}',
+              style: TextStyle(color: Colors.red),
             ),
           ),
+          loading: () => Center(child: CircularProgressIndicator()),
         ),
-        error: (error, stack) => Center(
-          child: Text(
-            'Error: ${error.toString()}',
-            style: TextStyle(color: Colors.red),
-          ),
-        ),
-        loading: () => Center(child: CircularProgressIndicator()),
       ),
     );
   }

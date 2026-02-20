@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:newasync/category/category_provider.dart';
@@ -14,26 +13,21 @@ class DetailScreen extends ConsumerWidget {
 
     final data = ref.watch(categoryProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          category,
-          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Switzer'),
-        ),
-        centerTitle: true,
-      ),
-      body: data.when(
-        data: (meals) => GridView.builder(
-          padding: EdgeInsets.all(8),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-          ),
-          itemCount: meals.length,
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                GestureDetector(
+      backgroundColor: Colors.blueGrey,
+
+      body: Expanded(
+        child: data.when(
+          data: (meals) => Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              itemCount: meals.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -44,32 +38,63 @@ class DetailScreen extends ConsumerWidget {
                     );
                   },
                   child: Container(
-                    height: 150,
-                    width: double.infinity,
-                    color: Colors.black,
-                    child: Image.network(
-                      meals[index].strMealThumb,
-                      fit: BoxFit.cover,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Image section
+                        Expanded(
+                          flex: 3,
+                          child: Hero(
+                            tag: 'meal_detail_${meals[index].idMeal}',
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(16),
+                                topRight: Radius.circular(16),
+                                bottomLeft: Radius.circular(16),
+                                bottomRight: Radius.circular(16),
+                              ),
+                              child: Image.network(
+                                meals[index].strMealThumb,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Center(
+                              child: Text(
+                                meals[index].strMeal,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Switzer',
+                                  fontSize: 16,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  meals[index].strMeal,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Switzer',
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            );
-          },
+                );
+              },
+            ),
+          ),
+          error: (error, stack) => Center(child: Text(error.toString())),
+          loading: () => Center(child: CircularProgressIndicator()),
         ),
-        error: (error, stack) => Center(child: Text(error.toString())),
-        loading: () => Center(child: CircularProgressIndicator()),
       ),
     );
   }
