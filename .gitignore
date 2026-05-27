@@ -43,3 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Explicitly allow these markdown files so they can be added to the repo
+!flutter_concepts.md
+!interview_questions.md
